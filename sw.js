@@ -1,8 +1,9 @@
-const CACHE_NAME = 'qr-app-v3';
+const CACHE_NAME = 'qr-app-v5'; // キャッシュバージョンを更新
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
+  './icon.jpg',
   'https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js'
 ];
 
@@ -12,6 +13,9 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         return cache.addAll(urlsToCache);
+      })
+      .then(() => {
+        console.log('Cache OK');
       })
   );
   self.skipWaiting();
@@ -54,12 +58,13 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+        cacheNames.filter((cacheName) => {
+          return cacheName.startsWith('qr-app-') && cacheName !== CACHE_NAME;
+        }).map((cacheName) => {
+          return caches.delete(cacheName);
         })
       );
     })
   );
+  return self.clients.claim();
 });
