@@ -153,95 +153,78 @@
     }
 
     .settings-panel {
-      display: none;
-      padding: 24px;
+        display: none;
+        padding: 20px;
     }
 
     .settings-panel.active {
-      display: block;
+        display: block;
     }
 
     .setting-group {
-      margin-bottom: 24px;
-      background: var(--ios-gray);
-      border-radius: 12px;
-      padding: 16px;
+        background: var(--ios-gray);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
     .setting-group h3 {
-      margin: 0 0 12px;
-      font-size: 16px;
-      font-weight: 600;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--ios-dark-gray);
     }
 
     .input-group {
-      margin-bottom: 16px;
+        margin-bottom: 16px;
+    }
+
+    .input-group:last-child {
+        margin-bottom: 0;
     }
 
     .input-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-      font-weight: 500;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: #666;
+        font-weight: 500;
     }
 
     .input-group input, .input-group textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--ios-border);
-      border-radius: 10px;
-      font-size: 14px;
-      background: var(--ios-card);
-      color: var(--ios-text);
-      transition: border 0.2s ease;
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--ios-light-gray);
+        border-radius: 8px;
+        font-size: 14px;
+        background-color: white;
+        transition: border 0.2s ease-in-out, background 0.2s;
     }
 
-    .input-group input:focus, .input-group textarea:focus {
-      outline: none;
-      border-color: var(--ios-blue);
+    body.dark-mode .input-group input,
+    body.dark-mode .input-group textarea {
+        background: #1c1c1e;
+        color: #f2f2f7;
+        border-color: #3a3a3c;
     }
 
     .save-btn {
-      background: var(--ios-blue);
-      border: none;
-      color: white;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s ease;
+        background-color: var(--ios-blue);
+        border: none;
+        color: white;
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 8px;
+        transition: background-color 0.2s ease-in-out;
     }
 
     .save-btn:hover {
-      background: #005bb5;
-    }
-
-    .install-prompt {
-      background: var(--ios-blue);
-      color: white;
-      text-align: center;
-      padding: 12px;
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-      z-index: 1000;
-      display: none;
-    }
-
-    .install-btn {
-      background: transparent;
-      border: 1px solid white;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 8px;
-      margin-left: 8px;
-      cursor: pointer;
-      font-weight: 600;
+        background-color: #005bb5;
     }
   </style>
 </head>
