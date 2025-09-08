@@ -508,6 +508,21 @@
             window.addEventListener('appinstalled', (e) => {
                 hideInstallPrompt();
             });
+            
+            // ページ離脱時の保存
+            window.addEventListener('beforeunload', () => {
+                if (document.getElementById('settings-view').classList.contains('active')) {
+                    autoSaveSettings();
+                }
+            });
+            
+            // Visibilitychange（バックグラウンド移行時）の保存
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden' && 
+                    document.getElementById('settings-view').classList.contains('active')) {
+                    autoSaveSettings();
+                }
+            });
         });
 
         // データの読み込み（sessionStorageに変更）
