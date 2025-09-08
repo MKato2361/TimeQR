@@ -2,248 +2,253 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRコード表示アプリ</title>
-    
-    <!-- PWA設定 -->
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUVLjgrPjg7zjg4nooajnpLrjgqLjg5fjg6oiLCJzaG9ydF9uYW1lIjoiUVLjgqLjg5fjg6oiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiM0Mjg1ZjQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lnZG1sbGQwSnZlRDBpTUNBd0lERXlPQ0F4TWpnaUlIaHRiRzV6UFNKb2RIUndPaTh2ZDNkM0xuY3pMbTl5Wnk4eU1EQXdMM04yWnlJK1BISmxZM1FnZUQwaU1EQWlJSGs5SWpBd0lpQjNhV1IwYUQwaU1USTRJaUJvWldsbmFIUTlJakV5T0NJZ1ptbHNiRDBpSTBRMU5VSTFOeUl2UGp4MFpYaDBJSGc5SWpZMElpQjVQU0kyTkNJZ1ptbHNiRDBpSTJabVptWm1aaUlnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJZ1ptOXVkQzF6YVhwbFBTSXlOQ0J3ZUNJK1VWSjhQQzl6ZG1jKyIsInNpemVzIjoiMTI4eDEyOCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
-    <meta name="theme-color" content="#4285f4">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="QRアプリ">
-    
+    <meta name="apple-mobile-web-app-title" content="QRコード">
+    <title>QRコード</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2YyZjJmMiIvPgogIDxwYXRoIGQ9Ik0zMzYuNSA0Mi43aDEzMi42djEyMy41aC0xMzIuNnptLTgwLTIxaC0xMzIuNnYxMjMuNWgxMzIuNnptLTgzLjMtMjFoLTEzMi42djEyMy41aDEzMi42eiIvPgogIDxwYXRoIGQ9Ik0zMzcuMSAyMTcuNWgxMzIuNnYxMjMuNWgtMTMyLjZ6bS04MC41LTIxaC0xMzIuNnYxMjMuNWgxMzIuNnptLTgxLjQtMjFoLTEzMi42djEyMy41aDEzMi42eiIvPgogIDxwYXRoIGQ9Ik0zMzcuMSAzOTYuMmgxMzIuNnYxMjMuNWgtMTMyLjZ6bS04MC41LTIxaC0xMzIuNnYxMjMuNWgxMzIuNnptLTgyLTY5LjloLTEzMi42djEyMy41aDEzMi42eiIvPgogIDxwYXRoIGQ9Ik0xMjAuNCA0MC44aC0zNy44Yy0yMy45IDAtNDMuMiAyMC4xLTQzLjIgNDQuNnYzNy44YzAgMjQuNSAxOS4zIDQ0LjYgNDMuMiA0NC42aDM3LjgmLS4xYzIzLjkgMCA0My4yLTIwLjEgNDMuMi00NC42di0zNy44YzAtMjQuNS0xOS4zLTQ0LjYtNDMuMi00NC42eiIvPgogIDxwYXRoIGQ9Ik00NTQuOSA0MC44aC00MS45Yy0yMS4yIDAtMzguNSA2LjctMzguNSAzMC40djYwLjFjMCAyMy44IDE3LjMgMzAuNCAzOC41IDMwLjRoNDEuOWMyMS4yIDAgMzguNS02LjcgMzguNS0zMC40di02MC4xYzAtMjMuOC0xNy4zLTMwLjQtMzguNS0zMC40eiIvPgogIDxwYXRoIGQ9Ik0xMjAuNiAzOTguMWgtMzcuOGMtMjMuOSAwLTQzLjIgMjAuMS00My4yIDQ0LjZ2MzcuOGMwIDI0LjUgMTkuMyA0NC42IDQzLjIgNDQuNmgyMTIuNGMwIDI0LjUgMTkuMyA0NC42IDQzLjIgNDQuNmgzNy44YzIzLjkgMCA0My4yLTIwLjEgNDMuMi00NC42di0zNy44YzAtMjQuNS0xOS4zLTQ0LjYtNDMuMi00NC42eiIvPgogIDxwYXRoIGQ9Ik00NTUuMiAzOTcuOGgtMjExLjVjLTIzLjkgMC00My4yIDIwLjEtNDMuMiA0NC42djM3LjhjMCAyNC41IDE5LjMgNDQuNiA0My4yIDQ0LjZoMjExLjVjMjMuOSAwIDQzLjItMjAuMSA0My4yLTQ0LjZ2LTM3LjljMC0yNC41LTE5LjItNDQuNS00My4yLTQ0LjV6Ii8+CiAgPHBhdGggZD0iTTUwNC44IDMwMS4yaC0yMjEuOWMtMjAuNSAwLTM3LjEgMTYuNy0zNy4xIDM3LjF2NzMuNWMwIDIwLjUgMTYuNyAzNy4xIDM3LjEgMzcuMWgyMjEuOWMyMC41IDAgMzcuMS0xNi43IDM3LjEtMzcuMXYtNzMuNWMwLTIwLjQtMTYuNi0zNy4xLTM3LjEtMzcuMXoiLz4KICA8cGF0aCBkPSJNMjQ1LjkgMTQ1LjJoLTU1LjFjLTI0LjcgMC00NC43IDIwLTQ0LjcgNDQuN3Y1My4xYzAgMjQuNyAyMCA0NC44IDQ0LjcgNDQuOGg1NS4xYzI0LjcgMCA0NC43LTIwIDQ0LjctNDQuOHYtNTMuMmMwLTI0LjctMi00NC43LTQ0LjctNDQuN3oiLz4KICA8L3N2Zz4=">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUVLjgqLjg5fjg6IiwiYW5kcm9pZF9pY29uX21hc2tpbmciOnRydWUsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lnZG1sbGQwSnZlRDBpTUNBd0lERXlPQ0F4TWpnaUlIaHRiRzV6UFNKb2RIUndPaTh2ZDNkM0xuY3pMbTl5Wnk4eU1EQXdMM04yWnlJK1BISmxZM1FnZUQwaU1EQWlJSGs5SWpBd0lpQjNhV1IwYUQwaU1USTRJaUJvWldsbmFIUTlJakV5T0NJZ1ptbHNiRDBpSTBRMU5VSTFOeUl2UGp4MFpYaDBJSGc5SWpZMElpQjVQU0kyTkNJZ1ptbHNiRDBpSTJabVptWm1aaUlnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJZ1ptOXVkQzF6YVhwbFBTSXlOQ0J3ZUNJK1VWSjhQQzl6ZG1jKyIsInNpemVzIjoiMTI4eDEyOCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <meta name="theme-color" content="#ffffff">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --ios-blue: #007aff;
+            --ios-gray: #f2f2f7;
+            --ios-dark-gray: #6c757d;
+            --ios-light-gray: #d1d1d6;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--ios-gray);
+            color: #1c1c1e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
             padding: 20px;
+            -webkit-font-smoothing: antialiased;
         }
-        
+
         .container {
-            max-width: 400px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 375px; /* iPhone SE 1st gen */
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
-        
+
         .header {
-            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
+            background-color: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--ios-light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
         }
-        
+
         .header h1 {
-            font-size: 24px;
+            font-size: 17px;
             font-weight: 600;
         }
-        
+
         .settings-btn {
             position: absolute;
-            right: 20px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255,255,255,0.2);
+            background: transparent;
             border: none;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
+            color: var(--ios-blue);
             font-size: 14px;
-            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
         }
-        
-        .settings-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
+
         .main-content {
-            padding: 30px 20px;
+            padding: 24px;
         }
-        
+
         .qr-buttons {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
-        
+
         .qr-btn {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            background-color: var(--ios-blue);
             border: none;
             color: white;
-            padding: 20px;
-            border-radius: 16px;
-            font-size: 18px;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+            transition: background-color 0.2s ease-in-out;
         }
-        
-        .qr-btn:nth-child(2) {
-            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-            box-shadow: 0 4px 15px rgba(78,205,196,0.3);
-        }
-        
+
         .qr-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+            background-color: #005bb5;
+        }
+        
+        /* QR2ボタンの色をセカンダリカラーに変更 */
+        .qr-btn:nth-child(2) {
+            background-color: #e5e5ea;
+            color: var(--ios-blue);
         }
         
         .qr-btn:nth-child(2):hover {
-            box-shadow: 0 8px 25px rgba(78,205,196,0.4);
+            background-color: #d1d1d6;
         }
-        
+
         .qr-display {
             display: none;
             text-align: center;
-            padding: 20px;
+            padding: 24px;
         }
-        
+
         .qr-display.active {
             display: block;
         }
-        
+
         .qr-code {
+            padding: 16px;
             background: white;
-            padding: 20px;
-            border-radius: 16px;
+            border-radius: 10px;
             display: inline-block;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
-        
+
+        .qr-code canvas {
+            display: block;
+            width: 200px;
+            height: 200px;
+        }
+
         .back-btn {
-            background: #6c757d;
+            background: var(--ios-light-gray);
             border: none;
-            color: white;
+            color: var(--ios-blue);
             padding: 12px 24px;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s ease;
+            margin-top: 24px;
+            transition: background-color 0.2s ease-in-out;
         }
-        
+
         .back-btn:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
+            background: #d1d1d6;
         }
-        
+
         .settings-panel {
             display: none;
-            padding: 20px;
+            padding: 24px;
         }
-        
+
         .settings-panel.active {
             display: block;
         }
-        
+
         .setting-group {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
+            margin-bottom: 24px;
+            background: var(--ios-gray);
+            border-radius: 10px;
+            padding: 16px;
         }
-        
+
         .setting-group h3 {
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-size: 16px;
             font-weight: 600;
         }
-        
+
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
-        
+
         .input-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #555;
+            font-size: 14px;
             font-weight: 500;
         }
-        
+
         .input-group input, .input-group textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e9ecef;
+            border: 1px solid var(--ios-light-gray);
             border-radius: 8px;
             font-size: 14px;
-            transition: border-color 0.3s ease;
+            background-color: white;
+            color: #1c1c1e;
         }
-        
+
         .input-group input:focus, .input-group textarea:focus {
             outline: none;
-            border-color: #4285f4;
+            border-color: var(--ios-blue);
         }
-        
+
         .save-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background-color: var(--ios-blue);
             border: none;
             color: white;
-            padding: 12px 30px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+            width: 100%;
+            transition: background-color 0.2s ease-in-out;
         }
-        
+
         .save-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(40,167,69,0.4);
+            background-color: #005bb5;
         }
         
         .install-prompt {
-            display: none;
-            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            background: #007aff;
             color: white;
-            padding: 15px;
             text-align: center;
+            padding: 12px;
             position: fixed;
             bottom: 20px;
             left: 20px;
             right: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(255,193,7,0.3);
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
             z-index: 1000;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
         }
         
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
         .install-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
+            background: transparent;
+            border: 1px solid white;
             color: white;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 8px;
-            margin-left: 10px;
+            margin-left: 8px;
             cursor: pointer;
             font-weight: 600;
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-                min-height: 100vh;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>QRコード表示</h1>
+            <h1>QRコード</h1>
             <button class="settings-btn" onclick="showSettings()">⚙️ 設定</button>
         </div>
         
@@ -300,16 +305,14 @@
     </div>
     
     <div id="install-prompt" class="install-prompt">
-        <span>このアプリをホーム画面に追加できます</span>
-        <button class="install-btn" onclick="installApp()">インストール</button>
+        <span>このアプリをホーム画面に追加</span>
+        <button class="install-btn" onclick="installApp()">追加</button>
         <button class="install-btn" onclick="hideInstallPrompt()">×</button>
     </div>
 
-    <!-- QR.js ライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
     <script>
-        // データ保存用の変数
         let appData = {
             qr1: { name: 'QR1', text: 'QR1のサンプルテキスト' },
             qr2: { name: 'QR2', text: 'QR2のサンプルテキスト' }
@@ -317,13 +320,11 @@
         
         let deferredPrompt = null;
 
-        // 初期化
         document.addEventListener('DOMContentLoaded', function() {
             loadData();
             updateUI();
             generateQRCodes();
             
-            // PWAインストールプロンプト
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
@@ -331,18 +332,16 @@
             });
         });
 
-        // データの読み込み
         function loadData() {
             try {
                 const saved = JSON.parse(sessionStorage.getItem('qrAppData') || '{}');
                 if (saved.qr1) appData.qr1 = saved.qr1;
                 if (saved.qr2) appData.qr2 = saved.qr2;
             } catch (e) {
-                console.log('データ読み込みエラー:', e);
+                console.error('データ読み込みエラー:', e);
             }
         }
 
-        // データの保存
         function saveData() {
             try {
                 sessionStorage.setItem('qrAppData', JSON.stringify(appData));
@@ -351,30 +350,25 @@
             }
         }
 
-        // UIの更新
         function updateUI() {
             document.getElementById('qr1-name').textContent = appData.qr1.name;
             document.getElementById('qr2-name').textContent = appData.qr2.name;
             document.getElementById('qr1-title').textContent = appData.qr1.name;
             document.getElementById('qr2-title').textContent = appData.qr2.name;
             
-            // 設定パネルの更新
             document.getElementById('qr1-name-input').value = appData.qr1.name;
             document.getElementById('qr2-name-input').value = appData.qr2.name;
             document.getElementById('qr1-text-input').value = appData.qr1.text;
             document.getElementById('qr2-text-input').value = appData.qr2.text;
         }
 
-        // QRコードの生成
         function generateQRCodes() {
             if (appData.qr1.text) {
                 try {
                     const qr1 = new QRious({
                         element: document.createElement('canvas'),
                         value: appData.qr1.text,
-                        size: 200,
-                        foreground: '#000000',
-                        background: '#ffffff'
+                        size: 200
                     });
                     document.getElementById('qr1-code').innerHTML = '';
                     document.getElementById('qr1-code').appendChild(qr1.canvas);
@@ -388,9 +382,7 @@
                     const qr2 = new QRious({
                         element: document.createElement('canvas'),
                         value: appData.qr2.text,
-                        size: 200,
-                        foreground: '#000000',
-                        background: '#ffffff'
+                        size: 200
                     });
                     document.getElementById('qr2-code').innerHTML = '';
                     document.getElementById('qr2-code').appendChild(qr2.canvas);
@@ -400,7 +392,6 @@
             }
         }
 
-        // 画面切り替え
         function showMain() {
             document.getElementById('main-view').style.display = 'block';
             document.getElementById('qr1-display').classList.remove('active');
@@ -418,7 +409,6 @@
             document.getElementById('settings-view').classList.add('active');
         }
 
-        // 設定の保存
         function saveSettings() {
             appData.qr1.name = document.getElementById('qr1-name-input').value || 'QR1';
             appData.qr1.text = document.getElementById('qr1-text-input').value || '';
@@ -431,7 +421,6 @@
             showMain();
         }
 
-        // PWAインストール
         function installApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -448,7 +437,6 @@
             document.getElementById('install-prompt').style.display = 'none';
         }
 
-        // Service Worker登録
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgKGV2ZW50KSA9PiB7IGNvbnNvbGUubG9nKCdTVyBpbnN0YWxsZWQnKTsgfSk7IHNlbGYuYWRkRXZlbnRMaXN0ZW5lcignZmV0Y2gnLCAoZXZlbnQpID0+IHsgZXZlbnQucmVzcG9uZFdpdGgoZmV0Y2goZXZlbnQucmVxdWVzdCkpOyB9KTs=');
         }
