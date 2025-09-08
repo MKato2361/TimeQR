@@ -5,424 +5,261 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="QRコード">
+  <meta name="apple-mobile-web-app-title" content="出退勤QR">
   <title>出退勤QRコード表示</title>
+
+  <!-- ホーム画面用アイコン -->
   <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+
   <style>
     :root {
       --ios-blue: #007aff;
       --ios-gray: #f2f2f7;
+      --ios-dark-gray: #1c1c1e;
       --ios-light-gray: #d1d1d6;
-      --ios-dark-gray: #6c757d;
-      --ios-bg: #ffffff;
-      --ios-text: #1c1c1e;
-      --ios-card: #ffffff;
-      --ios-border: #d1d1d6;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --ios-gray: #1c1c1e;
-        --ios-bg: #000000;
-        --ios-text: #f2f2f7;
-        --ios-card: #2c2c2e;
-        --ios-border: #3a3a3c;
-      }
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-      background-color: var(--ios-bg);
-      color: var(--ios-text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--ios-gray);
+      margin: 0;
       padding: 20px;
-      -webkit-font-smoothing: antialiased;
-      transition: background 0.3s ease, color 0.3s ease;
+      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+    }
+
+    body.dark-mode {
+      background-color: var(--ios-dark-gray);
+      color: white;
     }
 
     .container {
-      width: 100%;
-      max-width: 375px;
-      background: var(--ios-card);
+      max-width: 400px;
+      margin: 0 auto;
+      background: white;
       border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       overflow: hidden;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
+      transition: background 0.3s;
+    }
+
+    body.dark-mode .container {
+      background: #2c2c2e;
     }
 
     .header {
-      background: var(--ios-card);
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--ios-border);
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .header h1 {
-      font-size: 17px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--ios-light-gray);
       font-weight: 600;
-      margin: 0;
     }
 
-    .settings-btn {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: transparent;
-      border: none;
+    .header a {
       color: var(--ios-blue);
-      font-size: 15px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
-    .main-content {
-      padding: 24px;
+      text-decoration: none;
+      font-size: 14px;
     }
 
     .qr-buttons {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      padding: 20px;
+      gap: 12px;
     }
 
     .qr-btn {
-      background: var(--ios-blue);
-      border: none;
+      background-color: var(--ios-blue);
       color: white;
+      border: none;
       padding: 16px;
       border-radius: 12px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s ease;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .qr-btn.secondary {
+      background-color: #3a3a3c;
+      color: var(--ios-blue);
     }
 
     .qr-btn:hover {
-      background-color: #005bb5;
+      opacity: 0.9;
     }
 
-    .qr-btn:nth-child(2) {
-      background-color: var(--ios-gray);
-      color: var(--ios-blue);
-    }
-
-    .qr-btn:nth-child(2):hover {
-      background-color: var(--ios-border);
-    }
-
-    .qr-display {
-      display: none;
-      text-align: center;
-      padding: 24px;
-    }
-
-    .qr-display.active {
-      display: block;
-    }
-
-    .qr-code {
-      padding: 16px;
-      background: var(--ios-card);
-      border-radius: 12px;
-      display: inline-block;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    .qr-code canvas {
-      display: block;
-      width: 200px;
-      height: 200px;
-    }
-
-    .back-btn {
-      background: var(--ios-gray);
-      border: none;
-      color: var(--ios-blue);
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 24px;
-    }
-
+    /* 設定画面 */
     .settings-panel {
-        display: none;
-        padding: 20px;
+      display: none;
+      padding: 20px;
     }
 
     .settings-panel.active {
-        display: block;
+      display: block;
     }
 
     .setting-group {
-        background: var(--ios-gray);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      background: var(--ios-gray);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
     .setting-group h3 {
-        font-size: 15px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        color: var(--ios-dark-gray);
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--ios-dark-gray);
     }
 
     .input-group {
-        margin-bottom: 16px;
-    }
-
-    .input-group:last-child {
-        margin-bottom: 0;
+      margin-bottom: 16px;
     }
 
     .input-group label {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 13px;
-        color: #666;
-        font-weight: 500;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #666;
+      font-weight: 500;
     }
 
-    .input-group input, .input-group textarea {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid var(--ios-light-gray);
-        border-radius: 8px;
-        font-size: 14px;
-        background-color: white;
-        transition: border 0.2s ease-in-out, background 0.2s;
-    }
-
-    body.dark-mode .input-group input,
-    body.dark-mode .input-group textarea {
-        background: #1c1c1e;
-        color: #f2f2f7;
-        border-color: #3a3a3c;
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--ios-light-gray);
+      border-radius: 8px;
+      font-size: 14px;
     }
 
     .save-btn {
-        background-color: var(--ios-blue);
-        border: none;
-        color: white;
-        padding: 14px;
-        border-radius: 12px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 8px;
-        transition: background-color 0.2s ease-in-out;
+      background-color: var(--ios-blue);
+      border: none;
+      color: white;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 8px;
     }
 
-    .save-btn:hover {
-        background-color: #005bb5;
+    /* ホーム画面追加バナー */
+    .install-prompt {
+      background: #007aff;
+      color: white;
+      text-align: center;
+      padding: 12px 16px;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: none;
+      max-width: 90%;
+    }
+
+    .install-prompt button {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid white;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>QRコード</h1>
-      <button class="settings-btn" onclick="showSettings()">⚙️ 設定</button>
+      <span>QRコード</span>
+      <a href="#" id="settingsLink">設定</a>
     </div>
-    
-    <div id="main-view" class="main-content">
-      <div class="qr-buttons">
-        <button class="qr-btn" onclick="showQR(1)">
-          <span id="qr1-name">QR1</span>
-        </button>
-        <button class="qr-btn" onclick="showQR(2)">
-          <span id="qr2-name">QR2</span>
-        </button>
-      </div>
+    <div class="qr-buttons" id="mainPanel">
+      <button class="qr-btn">QR1</button>
+      <button class="qr-btn secondary">QR2</button>
     </div>
-    
-    <div id="qr1-display" class="qr-display">
-      <h2 id="qr1-title">QR1</h2>
-      <div id="qr1-code" class="qr-code"></div>
-      <button class="back-btn" onclick="showMain()">戻る</button>
-    </div>
-    
-    <div id="qr2-display" class="qr-display">
-      <h2 id="qr2-title">QR2</h2>
-      <div id="qr2-code" class="qr-code"></div>
-      <button class="back-btn" onclick="showMain()">戻る</button>
-    </div>
-    
-    <div id="settings-view" class="settings-panel">
+    <div class="settings-panel" id="settingsPanel">
       <div class="setting-group">
-        <h3>QR1 設定</h3>
+        <h3>QRコード設定</h3>
         <div class="input-group">
-          <label for="qr1-name-input">名称</label>
-          <input type="text" id="qr1-name-input" value="QR1">
+          <label for="qr1">QR1の内容</label>
+          <input type="text" id="qr1" placeholder="QR1のテキストを入力">
         </div>
         <div class="input-group">
-          <label for="qr1-text-input">QRコード内容</label>
-          <textarea id="qr1-text-input" rows="3" placeholder="QRコードに埋め込むテキストを入力"></textarea>
+          <label for="qr2">QR2の内容</label>
+          <input type="text" id="qr2" placeholder="QR2のテキストを入力">
         </div>
+        <button class="save-btn">保存</button>
       </div>
-      
-      <div class="setting-group">
-        <h3>QR2 設定</h3>
-        <div class="input-group">
-          <label for="qr2-name-input">名称</label>
-          <input type="text" id="qr2-name-input" value="QR2">
-        </div>
-        <div class="input-group">
-          <label for="qr2-text-input">QRコード内容</label>
-          <textarea id="qr2-text-input" rows="3" placeholder="QRコードに埋め込むテキストを入力"></textarea>
-        </div>
-      </div>
-      
-      <button class="save-btn" onclick="saveSettings()">保存して戻る</button>
     </div>
-  </div>
-  
-  <div id="install-prompt" class="install-prompt">
-    <span>このアプリをホーム画面に追加</span>
-    <button class="install-btn" onclick="installApp()">追加</button>
-    <button class="install-btn" onclick="hideInstallPrompt()">×</button>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <!-- ホーム画面追加バナー -->
+  <div id="installPrompt" class="install-prompt">
+    このアプリをホーム画面に追加できます
+    <button id="addBtn">追加</button>
+    <button id="closeBtn">✕</button>
+  </div>
 
   <script>
-    let appData = {
-      qr1: { name: 'QR1', text: 'QR1のサンプルテキスト' },
-      qr2: { name: 'QR2', text: 'QR2のサンプルテキスト' }
-    };
-    
-    let deferredPrompt = null;
+    const installPrompt = document.getElementById('installPrompt');
+    const addBtn = document.getElementById('addBtn');
+    const closeBtn = document.getElementById('closeBtn');
+    let deferredPrompt;
 
-    document.addEventListener('DOMContentLoaded', function() {
-      loadData();
-      updateUI();
-      generateQRCodes();
-      
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        document.getElementById('install-prompt').style.display = 'block';
-      });
+    // iOS判定
+    const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
+
+    if (isIos && !isInStandaloneMode) {
+      installPrompt.style.display = 'block';
+    }
+
+    // Android/Chrome用
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installPrompt.style.display = 'block';
     });
 
-    function loadData() {
-      try {
-        const saved = JSON.parse(sessionStorage.getItem('qrAppData') || '{}');
-        if (saved.qr1) appData.qr1 = saved.qr1;
-        if (saved.qr2) appData.qr2 = saved.qr2;
-      } catch (e) {
-        console.error('データ読み込みエラー:', e);
-      }
-    }
-
-    function saveData() {
-      try {
-        sessionStorage.setItem('qrAppData', JSON.stringify(appData));
-      } catch (e) {
-        console.error('データ保存エラー:', e);
-      }
-    }
-
-    function updateUI() {
-      document.getElementById('qr1-name').textContent = appData.qr1.name;
-      document.getElementById('qr2-name').textContent = appData.qr2.name;
-      document.getElementById('qr1-title').textContent = appData.qr1.name;
-      document.getElementById('qr2-title').textContent = appData.qr2.name;
-      
-      document.getElementById('qr1-name-input').value = appData.qr1.name;
-      document.getElementById('qr2-name-input').value = appData.qr2.name;
-      document.getElementById('qr1-text-input').value = appData.qr1.text;
-      document.getElementById('qr2-text-input').value = appData.qr2.text;
-    }
-
-    function generateQRCodes() {
-      if (appData.qr1.text) {
-        try {
-          const qr1 = new QRious({
-            element: document.createElement('canvas'),
-            value: appData.qr1.text,
-            size: 200
-          });
-          document.getElementById('qr1-code').innerHTML = '';
-          document.getElementById('qr1-code').appendChild(qr1.canvas);
-        } catch (e) {
-          document.getElementById('qr1-code').innerHTML = '<p>QRコード生成エラー</p>';
-        }
-      }
-      
-      if (appData.qr2.text) {
-        try {
-          const qr2 = new QRious({
-            element: document.createElement('canvas'),
-            value: appData.qr2.text,
-            size: 200
-          });
-          document.getElementById('qr2-code').innerHTML = '';
-          document.getElementById('qr2-code').appendChild(qr2.canvas);
-        } catch (e) {
-          document.getElementById('qr2-code').innerHTML = '<p>QRコード生成エラー</p>';
-        }
-      }
-    }
-
-    function showMain() {
-      document.getElementById('main-view').style.display = 'block';
-      document.getElementById('qr1-display').classList.remove('active');
-      document.getElementById('qr2-display').classList.remove('active');
-      document.getElementById('settings-view').classList.remove('active');
-    }
-
-    function showQR(num) {
-      document.getElementById('main-view').style.display = 'none';
-      document.getElementById('qr' + num + '-display').classList.add('active');
-    }
-
-    function showSettings() {
-      document.getElementById('main-view').style.display = 'none';
-      document.getElementById('settings-view').classList.add('active');
-    }
-
-    function saveSettings() {
-      appData.qr1.name = document.getElementById('qr1-name-input').value || 'QR1';
-      appData.qr1.text = document.getElementById('qr1-text-input').value || '';
-      appData.qr2.name = document.getElementById('qr2-name-input').value || 'QR2';
-      appData.qr2.text = document.getElementById('qr2-text-input').value || '';
-      
-      saveData();
-      updateUI();
-      generateQRCodes();
-      showMain();
-    }
-
-    function installApp() {
+    addBtn.addEventListener('click', async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            hideInstallPrompt();
-          }
-          deferredPrompt = null;
-        });
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installPrompt.style.display = 'none';
+        }
+        deferredPrompt = null;
       }
-    }
+    });
 
-    function hideInstallPrompt() {
-      document.getElementById('install-prompt').style.display = 'none';
-    }
+    closeBtn.addEventListener('click', () => {
+      installPrompt.style.display = 'none';
+    });
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgKGV2ZW50KSA9PiB7IGNvbnNvbGUubG9nKCdTVyBpbnN0YWxsZWQnKTsgfSk7IHNlbGYuYWRkRXZlbnRMaXN0ZW5lcignZmV0Y2gnLCAoZXZlbnQpID0+IHsgZXZlbnQucmVzcG9uZFdpdGgoZmV0Y2goZXZlbnQucmVxdWVzdCkpOyB9KTs=');
-    }
+    // 設定画面切り替え
+    const settingsLink = document.getElementById('settingsLink');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const mainPanel = document.getElementById('mainPanel');
+
+    settingsLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      mainPanel.style.display = mainPanel.style.display === 'none' ? 'block' : 'none';
+      settingsPanel.classList.toggle('active');
+    });
   </script>
 </body>
 </html>
