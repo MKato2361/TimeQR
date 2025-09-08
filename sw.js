@@ -1,9 +1,11 @@
-const CACHE_NAME = 'qr-app-v5'; // キャッシュバージョンを更新
+const CACHE_NAME = 'qr-app-v6'; // キャッシュバージョンを更新
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
-  './icon.jpg',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-192.png',
   'https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js'
 ];
 
