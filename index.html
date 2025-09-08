@@ -65,28 +65,25 @@
         }
         
         .header {
+            /* ヘッダーのpaddingを最小化 */
+            padding: 20px 20px;
             background: var(--ios-card-background);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--ios-border);
-            padding: 60px 20px 20px;
-            text-align: center;
+            text-align: right; /* ボタンを右寄せにする */
             position: sticky;
             top: 0;
             z-index: 100;
         }
         
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--ios-text);
-            letter-spacing: -0.5px;
-        }
+        /* h1スタイルは削除 */
         
         .settings-btn {
-            position: absolute;
-            right: 20px;
-            top: 65px;
+            /* 位置指定を相対的なものに変更 */
+            position: static;
+            display: inline-flex;
+            vertical-align: middle;
             background: var(--ios-light-gray);
             border: none;
             color: var(--ios-blue);
@@ -96,7 +93,6 @@
             cursor: pointer;
             font-size: 18px;
             transition: all 0.2s ease;
-            display: flex;
             align-items: center;
             justify-content: center;
         }
@@ -355,7 +351,7 @@
         /* iPhoneSE専用調整 */
         @media (max-width: 375px) and (max-height: 667px) {
             .header {
-                padding: 50px 16px 16px;
+                padding: 16px;
             }
             
             .header h1 {
@@ -363,8 +359,7 @@
             }
             
             .settings-btn {
-                top: 55px;
-                right: 16px;
+                position: static;
                 width: 32px;
                 height: 32px;
                 font-size: 16px;
@@ -399,7 +394,8 @@
         /* セーフエリア対応 */
         @supports (padding: max(0px)) {
             .header {
-                padding-top: max(60px, env(safe-area-inset-top) + 20px);
+                padding-top: max(20px, env(safe-area-inset-top) + 16px);
+                padding-bottom: 20px;
             }
             
             .install-prompt {
@@ -433,7 +429,6 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>QR</h1>
             <button class="settings-btn" onclick="showSettings()">⚙️</button>
         </div>
 
