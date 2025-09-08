@@ -168,17 +168,10 @@
             padding: 20px;
             text-align: center;
             min-height: calc(100vh - 140px);
-            /* 画面サイズに合わせてレイアウトを調整する新しいCSS */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: auto;
-            padding: 20px;
         }
         
         .qr-display.active {
-            display: flex;
+            display: block;
         }
         
         .qr-display h2 {
@@ -197,20 +190,8 @@
             box-shadow: 0 4px 20px var(--ios-shadow);
             border: 1px solid var(--ios-border);
             margin-bottom: 30px;
-            /* 画面サイズに合わせて調整 */
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         
-        .qr-code canvas, .qr-code img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-
         .back-btn {
             background: var(--ios-blue);
             border: none;
