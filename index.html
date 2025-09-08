@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRコード表示アプリ</title>
+    
+    <!-- PWA設定 -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUVLjgrPjg7zjg4nooajnpLrjgqLjg5fjg6oiLCJzaG9ydF9uYW1lIjoiUVLjgqLjg5fjg6oiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiM0Mjg1ZjQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTVRJNElpQm9aV2xuYUhROUlqRXlPQ0lnZG1sbGQwSnZlRDBpTUNBd0lERXlPQ0F4TWpnaUlIaHRiRzV6UFNKb2RIUndPaTh2ZDNkM0xuY3pMbTl5Wnk4eU1EQXdMM04yWnlJK1BISmxZM1FnZUQwaU1EQWlJSGs5SWpBd0lpQjNhV1IwYUQwaU1USTRJaUJvWldsbmFIUTlJakV5T0NJZ1ptbHNiRDBpSTBRMU5VSTFOeUl2UGp4MFpYaDBJSGc5SWpZMElpQjVQU0kyTkNJZ1ptbHNiRDBpSTJabVptWm1aaUlnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJZ1ptOXVkQzF6YVhwbFBTSXlOQ0J3ZUNJK1VWSjhQQzl6ZG1jKyIsInNpemVzIjoiMTI4eDEyOCIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <meta name="theme-color" content="#4285f4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="QRアプリ">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .settings-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .main-content {
+            padding: 30px 20px;
+        }
+        
+        .qr-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .qr-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            border: none;
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+        
+        .qr-btn:nth-child(2) {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            box-shadow: 0 4px 15px rgba(78,205,196,0.3);
+        }
+        
+        .qr-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+        }
+        
+        .qr-btn:nth-child(2):hover {
+            box-shadow: 0 8px 25px rgba(78,205,196,0.4);
+        }
+        
+        .qr-display {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .qr-display.active {
+            display: block;
+        }
+        
+        .qr-code {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: inline-block;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .back-btn {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .settings-panel {
+            display: none;
+            padding: 20px;
+        }
+        
+        .settings-panel.active {
+            display: block;
+        }
+        
+        .setting-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .setting-group h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #4285f4;
+        }
+        
+        .save-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(40,167,69,0.4);
+        }
+        
+        .install-prompt {
+            display: none;
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(255,193,7,0.3);
+            z-index: 1000;
+        }
+        
+        .install-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>QRコード表示</h1>
+            <button class="settings-btn" onclick="showSettings()">⚙️ 設定</button>
+        </div>
+        
+        <div id="main-view" class="main-content">
+            <div class="qr-buttons">
+                <button class="qr-btn" onclick="showQR(1)">
+                    <span id="qr1-name">QR1</span>
+                </button>
+                <button class="qr-btn" onclick="showQR(2)">
+                    <span id="qr2-name">QR2</span>
+                </button>
+            </div>
+        </div>
+        
+        <div id="qr1-display" class="qr-display">
+            <h2 id="qr1-title">QR1</h2>
+            <div id="qr1-code" class="qr-code"></div>
+            <button class="back-btn" onclick="showMain()">戻る</button>
+        </div>
+        
+        <div id="qr2-display" class="qr-display">
+            <h2 id="qr2-title">QR2</h2>
+            <div id="qr2-code" class="qr-code"></div>
+            <button class="back-btn" onclick="showMain()">戻る</button>
+        </div>
+        
+        <div id="settings-view" class="settings-panel">
+            <div class="setting-group">
+                <h3>QR1 設定</h3>
+                <div class="input-group">
+                    <label for="qr1-name-input">名称</label>
+                    <input type="text" id="qr1-name-input" value="QR1">
+                </div>
+                <div class="input-group">
+                    <label for="qr1-text-input">QRコード内容</label>
+                    <textarea id="qr1-text-input" rows="3" placeholder="QRコードに埋め込むテキストを入力"></textarea>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <h3>QR2 設定</h3>
+                <div class="input-group">
+                    <label for="qr2-name-input">名称</label>
+                    <input type="text" id="qr2-name-input" value="QR2">
+                </div>
+                <div class="input-group">
+                    <label for="qr2-text-input">QRコード内容</label>
+                    <textarea id="qr2-text-input" rows="3" placeholder="QRコードに埋め込むテキストを入力"></textarea>
+                </div>
+            </div>
+            
+            <button class="save-btn" onclick="saveSettings()">保存して戻る</button>
+        </div>
+    </div>
+    
+    <div id="install-prompt" class="install-prompt">
+        <span>このアプリをホーム画面に追加できます</span>
+        <button class="install-btn" onclick="installApp()">インストール</button>
+        <button class="install-btn" onclick="hideInstallPrompt()">×</button>
+    </div>
+
+    <!-- QR.js ライブラリ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+    <script>
+        // データ保存用の変数
+        let appData = {
+            qr1: { name: 'QR1', text: 'QR1のサンプルテキスト' },
+            qr2: { name: 'QR2', text: 'QR2のサンプルテキスト' }
+        };
+        
+        let deferredPrompt = null;
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateUI();
+            generateQRCodes();
+            
+            // PWAインストールプロンプト
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('install-prompt').style.display = 'block';
+            });
+        });
+
+        // データの読み込み
+        function loadData() {
+            try {
+                const saved = JSON.parse(sessionStorage.getItem('qrAppData') || '{}');
+                if (saved.qr1) appData.qr1 = saved.qr1;
+                if (saved.qr2) appData.qr2 = saved.qr2;
+            } catch (e) {
+                console.log('データ読み込みエラー:', e);
+            }
+        }
+
+        // データの保存
+        function saveData() {
+            try {
+                sessionStorage.setItem('qrAppData', JSON.stringify(appData));
+            } catch (e) {
+                console.error('データ保存エラー:', e);
+            }
+        }
+
+        // UIの更新
+        function updateUI() {
+            document.getElementById('qr1-name').textContent = appData.qr1.name;
+            document.getElementById('qr2-name').textContent = appData.qr2.name;
+            document.getElementById('qr1-title').textContent = appData.qr1.name;
+            document.getElementById('qr2-title').textContent = appData.qr2.name;
+            
+            // 設定パネルの更新
+            document.getElementById('qr1-name-input').value = appData.qr1.name;
+            document.getElementById('qr2-name-input').value = appData.qr2.name;
+            document.getElementById('qr1-text-input').value = appData.qr1.text;
+            document.getElementById('qr2-text-input').value = appData.qr2.text;
+        }
+
+        // QRコードの生成
+        function generateQRCodes() {
+            if (appData.qr1.text) {
+                try {
+                    const qr1 = new QRious({
+                        element: document.createElement('canvas'),
+                        value: appData.qr1.text,
+                        size: 200,
+                        foreground: '#000000',
+                        background: '#ffffff'
+                    });
+                    document.getElementById('qr1-code').innerHTML = '';
+                    document.getElementById('qr1-code').appendChild(qr1.canvas);
+                } catch (e) {
+                    document.getElementById('qr1-code').innerHTML = '<p>QRコード生成エラー</p>';
+                }
+            }
+            
+            if (appData.qr2.text) {
+                try {
+                    const qr2 = new QRious({
+                        element: document.createElement('canvas'),
+                        value: appData.qr2.text,
+                        size: 200,
+                        foreground: '#000000',
+                        background: '#ffffff'
+                    });
+                    document.getElementById('qr2-code').innerHTML = '';
+                    document.getElementById('qr2-code').appendChild(qr2.canvas);
+                } catch (e) {
+                    document.getElementById('qr2-code').innerHTML = '<p>QRコード生成エラー</p>';
+                }
+            }
+        }
+
+        // 画面切り替え
+        function showMain() {
+            document.getElementById('main-view').style.display = 'block';
+            document.getElementById('qr1-display').classList.remove('active');
+            document.getElementById('qr2-display').classList.remove('active');
+            document.getElementById('settings-view').classList.remove('active');
+        }
+
+        function showQR(num) {
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('qr' + num + '-display').classList.add('active');
+        }
+
+        function showSettings() {
+            document.getElementById('main-view').style.display = 'none';
+            document.getElementById('settings-view').classList.add('active');
+        }
+
+        // 設定の保存
+        function saveSettings() {
+            appData.qr1.name = document.getElementById('qr1-name-input').value || 'QR1';
+            appData.qr1.text = document.getElementById('qr1-text-input').value || '';
+            appData.qr2.name = document.getElementById('qr2-name-input').value || 'QR2';
+            appData.qr2.text = document.getElementById('qr2-text-input').value || '';
+            
+            saveData();
+            updateUI();
+            generateQRCodes();
+            showMain();
+        }
+
+        // PWAインストール
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        hideInstallPrompt();
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        function hideInstallPrompt() {
+            document.getElementById('install-prompt').style.display = 'none';
+        }
+
+        // Service Worker登録
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgKGV2ZW50KSA9PiB7IGNvbnNvbGUubG9nKCdTVyBpbnN0YWxsZWQnKTsgfSk7IHNlbGYuYWRkRXZlbnRMaXN0ZW5lcignZmV0Y2gnLCAoZXZlbnQpID0+IHsgZXZlbnQucmVzcG9uZFdpdGgoZmV0Y2goZXZlbnQucmVxdWVzdCkpOyB9KTs=');
+        }
+    </script>
+</body>
+</html>
