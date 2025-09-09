@@ -13,6 +13,7 @@
     <link rel="apple-touch-icon" href="./icon-192.png">
 
     <style>
+        /* CSSは変更なし */
         :root {
             --ios-blue: #007AFF;
             --ios-light-blue: #4DA6FF;
@@ -48,6 +49,7 @@
             overflow-x: hidden;
         }
         
+        /* iPhoneSE最適化 */
         @media (max-width: 375px) and (max-height: 667px) {
             body {
                 font-size: 15px;
@@ -165,25 +167,11 @@
             display: none;
             padding: 20px;
             text-align: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            min-height: 100%;
-            background: var(--ios-background);
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: auto;
-            padding-top: calc(100px + 20px);
-            padding-bottom: 20px;
-            -webkit-overflow-scrolling: touch;
+            min-height: calc(100vh - 140px);
         }
         
         .qr-display.active {
-            display: flex;
+            display: block;
         }
         
         .qr-display h2 {
@@ -202,19 +190,8 @@
             box-shadow: 0 4px 20px var(--ios-shadow);
             border: 1px solid var(--ios-border);
             margin-bottom: 30px;
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         
-        .qr-code canvas, .qr-code img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-
         .back-btn {
             background: var(--ios-blue);
             border: none;
@@ -236,17 +213,7 @@
         .settings-panel {
             display: none;
             padding: 20px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            min-height: 100%;
-            background: var(--ios-background);
-            z-index: 999;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-top: calc(100px + 20px);
-            padding-bottom: 20px;
+            min-height: calc(100vh - 140px);
         }
         
         .settings-panel.active {
@@ -385,6 +352,7 @@
             padding: 8px 12px;
         }
         
+        /* iPhoneSE専用調整 */
         @media (max-width: 375px) and (max-height: 667px) {
             .header {
                 padding: 50px 16px 16px;
@@ -428,6 +396,7 @@
             }
         }
         
+        /* セーフエリア対応 */
         @supports (padding: max(0px)) {
             .header {
                 padding-top: max(60px, env(safe-area-inset-top) + 20px);
@@ -438,6 +407,7 @@
             }
         }
         
+        /* ダークモード対応 */
         @media (prefers-color-scheme: dark) {
             :root {
                 --ios-background: #000000;
@@ -481,13 +451,13 @@
     <div id="qr1-display" class="qr-display">
         <h2 id="qr1-title">QR1</h2>
         <div id="qr1-code" class="qr-code"></div>
-        <button class="back-btn" onclick="showMainView()">戻る</button>
+        <button class="back-btn" onclick="showMain()">戻る</button>
     </div>
     
     <div id="qr2-display" class="qr-display">
         <h2 id="qr2-title">QR2</h2>
         <div id="qr2-code" class="qr-code"></div>
-        <button class="back-btn" onclick="showMainView()">戻る</button>
+        <button class="back-btn" onclick="showMain()">戻る</button>
     </div>
     
     <div id="settings-view" class="settings-panel">
@@ -547,6 +517,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
 <script>
+    // データ保存用の変数
     let appData = {
         qr1: { name: 'QR1', text: 'QR1のサンプルテキスト' },
         qr2: { name: 'QR2', text: 'QR2のサンプルテキスト' }
@@ -554,7 +525,9 @@
     
     let deferredPrompt = null;
 
+    // 初期化
     document.addEventListener('DOMContentLoaded', function() {
+        // Service Workerの登録
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -572,9 +545,6 @@
         generateQRCodes();
         setupAutoSave();
         
-        // ページ読み込み時にメイン画面を表示
-        showMainView();
-        
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -588,6 +558,7 @@
         });
     });
 
+    // データの読み込み
     function loadData() {
         let savedData = localStorage.getItem('qrAppData');
         if (savedData) {
@@ -600,6 +571,7 @@
         }
     }
 
+    // データの保存
     function saveData() {
         try {
             localStorage.setItem('qrAppData', JSON.stringify(appData));
@@ -610,6 +582,7 @@
         }
     }
 
+    // 自動保存機能の設定
     function setupAutoSave() {
         const inputs = [
             'qr1-name-input', 'qr1-text-input', 
@@ -630,6 +603,7 @@
         });
     }
 
+    // 自動保存
     function autoSaveSettings() {
         appData.qr1.name = document.getElementById('qr1-name-input').value || 'QR1';
         appData.qr1.text = document.getElementById('qr1-text-input').value || '';
@@ -660,6 +634,7 @@
         }, 3000);
     }
 
+    // UIの更新
     function updateUI() {
         document.getElementById('qr1-name').textContent = appData.qr1.name;
         document.getElementById('qr2-name').textContent = appData.qr2.name;
@@ -672,6 +647,7 @@
         document.getElementById('qr2-text-input').value = appData.qr2.text;
     }
 
+    // QRコードの生成
     function generateQRCodes() {
         const qr1Element = document.getElementById('qr1-code');
         const qr2Element = document.getElementById('qr2-code');
@@ -690,8 +666,6 @@
             } catch (e) {
                 qr1Element.innerHTML = '<p style="color: var(--ios-red);">QRコード生成エラー</p>';
             }
-        } else {
-            qr1Element.innerHTML = '<p style="color: var(--ios-secondary-text); font-size: 14px;">QRコードに変換するテキストを入力してください。</p>';
         }
         
         qr2Element.innerHTML = '';
@@ -708,33 +682,28 @@
             } catch (e) {
                 qr2Element.innerHTML = '<p style="color: var(--ios-red);">QRコード生成エラー</p>';
             }
-        } else {
-            qr2Element.innerHTML = '<p style="color: var(--ios-secondary-text); font-size: 14px;">QRコードに変換するテキストを入力してください。</p>';
         }
     }
 
-    function hideAllViews() {
-        document.getElementById('main-view').style.display = 'none';
+    // 画面切り替え
+    function showMain() {
+        document.getElementById('main-view').style.display = 'block';
         document.getElementById('qr1-display').classList.remove('active');
         document.getElementById('qr2-display').classList.remove('active');
         document.getElementById('settings-view').classList.remove('active');
     }
 
-    function showMainView() {
-        hideAllViews();
-        document.getElementById('main-view').style.display = 'block';
-    }
-
     function showQR(num) {
-        hideAllViews();
-        document.getElementById('qr' + num + '-display').classList.add('active'); 
+        document.getElementById('main-view').style.display = 'none';
+        document.getElementById('qr' + num + '-display').classList.add('active');
     }
 
     function showSettings() {
-        hideAllViews();
-        document.getElementById('settings-view').classList.add('active'); 
+        document.getElementById('main-view').style.display = 'none';
+        document.getElementById('settings-view').classList.add('active');
     }
 
+    // 設定の保存
     function saveSettings() {
         appData.qr1.name = document.getElementById('qr1-name-input').value || 'QR1';
         appData.qr1.text = document.getElementById('qr1-text-input').value || '';
@@ -744,11 +713,12 @@
         saveData();
         updateUI();
         generateQRCodes();
-        showMainView();
+        showMain();
         
         navigator.vibrate && navigator.vibrate(50);
     }
 
+    // PWAインストール
     function installApp() {
         if (deferredPrompt) {
             deferredPrompt.prompt();
@@ -766,6 +736,7 @@
         document.getElementById('install-prompt').style.display = 'none';
     }
 
+    // バックアップ・復元機能
     function exportSettings() {
         try {
             const exportData = {
@@ -880,19 +851,8 @@
     async function pasteFromClipboard() {
         try {
             let pastedData = await navigator.clipboard.readText();
-            if (!pastedData) {
-                showMessage('📋 クリップボードにデータがありません', 'info');
-                return;
-            }
-
-            let importData;
-            try {
-                importData = JSON.parse(pastedData);
-            } catch (e) {
-                showMessage('❌ 無効なデータ形式です', 'error');
-                return;
-            }
-            
+            if (!pastedData) return;
+            const importData = JSON.parse(pastedData);
             if (importData.data && importData.data.qr1 && importData.data.qr2) {
                 appData = importData.data;
                 saveData();
