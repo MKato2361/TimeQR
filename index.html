@@ -1,507 +1,528 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>QRコード表示</title>
 
-```
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#007AFF">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="QR">
-<link rel="apple-touch-icon" href="./icon-192.png">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="
+#007AFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="QR">
+    <link rel="apple-touch-icon" href="./icon-192.png">
 
-<style>
-    :root {
-        --ios-blue: #007AFF;
-        --ios-light-blue: #4DA6FF;
-        --ios-green: #30D158;
-        --ios-red: #FF3B30;
-        --ios-orange: #FF9500;
-        --ios-purple: #AF52DE;
-        --ios-gray: #8E8E93;
-        --ios-light-gray: #F2F2F7;
-        --ios-dark-gray: #1C1C1E;
-        --ios-background: #F2F2F7;
-        --ios-card-background: rgba(255, 255, 255, 0.8);
-        --ios-text: #000000;
-        --ios-secondary-text: #8E8E93;
-        --ios-border: rgba(60, 60, 67, 0.18);
-        --ios-shadow: rgba(0, 0, 0, 0.1);
-    }
-    
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-    }
-    
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
-        background: var(--ios-background);
-        min-height: 100vh;
-        line-height: 1.4;
-        color: var(--ios-text);
-        font-size: 16px;
-        overflow-x: hidden;
-    }
-    
-    /* iPhoneSE最適化 */
-    @media (max-width: 375px) and (max-height: 667px) {
-        body {
-            font-size: 15px;
-        }
-    }
-    
-    .container {
-        max-width: 375px;
-        margin: 0 auto;
-        min-height: 100vh;
-        background: var(--ios-background);
-        position: relative;
-    }
-    
-    .header {
-        /* ヘッダーの高さを大幅に削減 */
-        padding: 10px 20px;
-        background: var(--ios-card-background);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-bottom: 1px solid var(--ios-border);
-        text-align: right;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        min-height: 50px; /* 最小高さを設定 */
-    }
-    
-    .settings-btn {
-        position: static;
-        display: inline-flex;
-        vertical-align: middle;
-        background: var(--ios-light-gray);
-        border: none;
-        color: var(--ios-blue);
-        width: 32px; /* サイズを少し小さく */
-        height: 32px;
-        border-radius: 16px;
-        cursor: pointer;
-        font-size: 16px; /* フォントサイズを調整 */
-        transition: all 0.2s ease;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .settings-btn:active {
-        transform: scale(0.95);
-        background: #E5E5EA;
-    }
-    
-    .main-content {
-        padding: 20px 20px; /* 上部のpaddingを削減 */
-        min-height: calc(100vh - 70px); /* ヘッダー高さに合わせて調整 */
-    }
-    
-    .qr-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        max-width: 320px;
-        margin: 0 auto;
-    }
-    
-    .qr-btn {
-        background: var(--ios-card-background);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--ios-border);
-        color: var(--ios-blue);
-        padding: 20px 24px;
-        border-radius: 16px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 10px var(--ios-shadow);
-        position: relative;
-        min-height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .qr-btn::before {
-        content: '';
-        position: absolute;
-        left: 20px;
-        width: 24px;
-        height: 24px;
-        background: var(--ios-blue);
-        border-radius: 6px;
-        opacity: 0.1;
-    }
-    
-    .qr-btn:nth-child(2) {
-        color: var(--ios-green);
-    }
-    
-    .qr-btn:nth-child(2)::before {
-        background: var(--ios-green);
-    }
-    
-    .qr-btn:active {
-        transform: scale(0.98);
-        background: rgba(255, 255, 255, 0.6);
-    }
-    
-    .qr-display {
-        display: none;
-        padding: 20px;
-        text-align: center;
-        min-height: calc(100vh - 70px);
-    }
-    
-    .qr-display.active {
-        display: block;
-    }
-    
-    .qr-display h2 {
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--ios-text);
-        margin-bottom: 30px;
-        letter-spacing: -0.3px;
-    }
-    
-    .qr-code {
-        background: white;
-        padding: 24px;
-        border-radius: 20px;
-        display: inline-block;
-        box-shadow: 0 4px 20px var(--ios-shadow);
-        border: 1px solid var(--ios-border);
-        margin-bottom: 30px;
-    }
-    
-    .back-btn {
-        background: var(--ios-blue);
-        border: none;
-        color: white;
-        padding: 14px 28px;
-        border-radius: 12px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
-    }
-    
-    .back-btn:active {
-        transform: scale(0.95);
-        background: #0056CC;
-    }
-    
-    .settings-panel {
-        display: none;
-        padding: 20px;
-        min-height: calc(100vh - 70px);
-    }
-    
-    .settings-panel.active {
-        display: block;
-    }
-    
-    .setting-group {
-        background: var(--ios-card-background);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--ios-border);
-        border-radius: 16px;
-        margin-bottom: 20px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px var(--ios-shadow);
-    }
-    
-    .setting-group h3 {
-        color: var(--ios-text);
-        padding: 16px 20px 8px;
-        font-size: 18px;
-        font-weight: 600;
-        letter-spacing: -0.2px;
-    }
-    
-    .input-group {
-        padding: 0 20px 16px;
-    }
-    
-    .input-group:last-child {
-        padding-bottom: 20px;
-    }
-    
-    .input-group label {
-        display: block;
-        margin-bottom: 8px;
-        color: var(--ios-text);
-        font-weight: 500;
-        font-size: 14px;
-    }
-    
-    .input-group input, .input-group textarea {
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid var(--ios-border);
-        border-radius: 12px;
-        font-size: 16px;
-        background: white;
-        color: var(--ios-text);
-        transition: border-color 0.2s ease;
-        font-family: inherit;
-        resize: vertical;
-    }
-    
-    .input-group input:focus, .input-group textarea:focus {
-        outline: none;
-        border-color: var(--ios-blue);
-        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-    }
-    
-    .save-btn {
-        background: var(--ios-blue);
-        border: none;
-        color: white;
-        padding: 16px 32px;
-        border-radius: 12px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        width: 100%;
-        box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
-        margin-top: 10px;
-    }
-    
-    .save-btn:active {
-        transform: scale(0.98);
-        background: #0056CC;
-    }
-    
-    .backup-btn {
-        background: var(--ios-gray);
-        border: none;
-        color: white;
-        padding: 10px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        flex: 1;
-    }
-    
-    .backup-btn:active {
-        transform: scale(0.95);
-        background: #6d6d72;
-    }
-    
-    .install-prompt {
-        display: none;
-        background: var(--ios-card-background);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--ios-border);
-        color: var(--ios-text);
-        padding: 16px 20px;
-        position: fixed;
-        bottom: 34px;
-        left: 20px;
-        right: 20px;
-        border-radius: 16px;
-        box-shadow: 0 8px 30px var(--ios-shadow);
-        z-index: 1000;
-        text-align: center;
-    }
-    
-    .install-btn {
-        background: var(--ios-blue);
-        border: none;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 8px;
-        margin: 8px 4px 0;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 14px;
-        transition: all 0.2s ease;
-    }
-    
-    .install-btn:active {
-        transform: scale(0.95);
-    }
-    
-    .install-btn.dismiss {
-        background: var(--ios-gray);
-        padding: 8px 12px;
-    }
-    
-    /* iPhoneSE専用調整 */
-    @media (max-width: 375px) and (max-height: 667px) {
-        .header {
-            padding: 8px 16px; /* さらに薄く */
-            min-height: 44px;
-        }
-        
-        .settings-btn {
-            width: 30px;
-            height: 30px;
-            font-size: 15px;
-        }
-        
-        .main-content {
-            padding: 16px;
-        }
-        
-        .qr-btn {
-            padding: 18px 20px;
-            font-size: 17px;
-            min-height: 56px;
-        }
-        
-        .qr-code {
-            padding: 20px;
-        }
-        
-        .settings-panel, .qr-display {
-            padding: 16px;
-            min-height: calc(100vh - 60px);
-        }
-        
-        .install-prompt {
-            bottom: 20px;
-            left: 16px;
-            right: 16px;
-            font-size: 14px;
-        }
-    }
-    
-    /* セーフエリア対応 */
-    @supports (padding: max(0px)) {
-        .header {
-            padding-top: max(10px, env(safe-area-inset-top) + 8px);
-            padding-bottom: 10px;
-        }
-        
-        .install-prompt {
-            bottom: max(34px, env(safe-area-inset-bottom) + 20px);
-        }
-    }
-    
-    /* ダークモード対応 */
-    @media (prefers-color-scheme: dark) {
+    <style>
+        /* CSSは変更なし */
         :root {
-            --ios-background: #000000;
-            --ios-card-background: rgba(28, 28, 30, 0.8);
-            --ios-text: #FFFFFF;
-            --ios-secondary-text: #8E8E93;
-            --ios-border: rgba(84, 84, 88, 0.6);
-            --ios-shadow: rgba(0, 0, 0, 0.3);
-            --ios-light-gray: #1C1C1E;
+            --ios-blue: 
+#007AFF;
+            --ios-light-blue: 
+#4DA6FF;
+            --ios-green: 
+#30D158;
+            --ios-red: 
+#FF3B30;
+            --ios-orange: 
+#FF9500;
+            --ios-purple: 
+#AF52DE;
+            --ios-gray: 
+#8E8E93;
+            --ios-light-gray: 
+#F2F2F7;
+            --ios-dark-gray: 
+#1C1C1E;
+            --ios-background: 
+#F2F2F7;
+            --ios-card-background: rgba(255, 255, 255, 0.8);
+            --ios-text: 
+#000000;
+            --ios-secondary-text: 
+#8E8E93;
+            --ios-border: rgba(60, 60, 67, 0.18);
+            --ios-shadow: rgba(0, 0, 0, 0.1);
         }
-        
-        .input-group input, .input-group textarea {
-            background: #1C1C1E;
-            color: white;
-        }
-        
-        .qr-code {
-            background: white;
-        }
-    }
-</style>
-```
 
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+  background: var(--ios-background);
+  min-height: 100vh;
+  line-height: 1.4;
+  color: var(--ios-text);
+  font-size: 16px;
+  overflow-x: hidden;
+}
+
+/* iPhoneSE最適化 */
+@media (max-width: 375px) and (max-height: 667px) {
+  body {
+      font-size: 15px;
+  }
+}
+
+.container {
+  max-width: 375px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--ios-background);
+  position: relative;
+}
+
+.header {
+  /* ヘッダーのpaddingを最小化 /
+  padding: 20px 20px;
+  background: var(--ios-card-background);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--ios-border);
+  text-align: right; / ボタンを右寄せにする */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* h1スタイルは削除 */
+
+.settings-btn {
+  /* 位置指定を相対的なものに変更 */
+  position: static;
+  display: inline-flex;
+  vertical-align: middle;
+  background: var(--ios-light-gray);
+  border: none;
+  color: var(--ios-blue);
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn:active {
+  transform: scale(0.95);
+  background: 
+#E5E5EA;
+}
+
+.main-content {
+  padding: 30px 20px;
+  min-height: calc(100vh - 140px);
+}
+
+.qr-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.qr-btn {
+  background: var(--ios-card-background);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ios-border);
+  color: var(--ios-blue);
+  padding: 20px 24px;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px var(--ios-shadow);
+  position: relative;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-btn::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  width: 24px;
+  height: 24px;
+  background: var(--ios-blue);
+  border-radius: 6px;
+  opacity: 0.1;
+}
+
+.qr-btn:nth-child(2) {
+  color: var(--ios-green);
+}
+
+.qr-btn:nth-child(2)::before {
+  background: var(--ios-green);
+}
+
+.qr-btn:active {
+  transform: scale(0.98);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.qr-display {
+  display: none;
+  padding: 20px;
+  text-align: center;
+  min-height: calc(100vh - 140px);
+}
+
+.qr-display.active {
+  display: block;
+}
+
+.qr-display h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ios-text);
+  margin-bottom: 30px;
+  letter-spacing: -0.3px;
+}
+
+.qr-code {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  display: inline-block;
+  box-shadow: 0 4px 20px var(--ios-shadow);
+  border: 1px solid var(--ios-border);
+  margin-bottom: 30px;
+}
+
+.back-btn {
+  background: var(--ios-blue);
+  border: none;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+}
+
+.back-btn:active {
+  transform: scale(0.95);
+  background: 
+#0056CC;
+}
+
+.settings-panel {
+  display: none;
+  padding: 20px;
+  min-height: calc(100vh - 140px);
+}
+
+.settings-panel.active {
+  display: block;
+}
+
+.setting-group {
+  background: var(--ios-card-background);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ios-border);
+  border-radius: 16px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px var(--ios-shadow);
+}
+
+.setting-group h3 {
+  color: var(--ios-text);
+  padding: 16px 20px 8px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.input-group {
+  padding: 0 20px 16px;
+}
+
+.input-group:last-child {
+  padding-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ios-text);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.input-group input, .input-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--ios-border);
+  border-radius: 12px;
+  font-size: 16px;
+  background: white;
+  color: var(--ios-text);
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.input-group input:focus, .input-group textarea:focus {
+  outline: none;
+  border-color: var(--ios-blue);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.save-btn {
+  background: var(--ios-blue);
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+  margin-top: 10px;
+}
+
+.save-btn:active {
+  transform: scale(0.98);
+  background: 
+#0056CC;
+}
+
+.backup-btn {
+  background: var(--ios-gray);
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.backup-btn:active {
+  transform: scale(0.95);
+  background: 
+#6d6d72;
+}
+
+.install-prompt {
+  display: none;
+  background: var(--ios-card-background);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--ios-border);
+  color: var(--ios-text);
+  padding: 16px 20px;
+  position: fixed;
+  bottom: 34px;
+  left: 20px;
+  right: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px var(--ios-shadow);
+  z-index: 1000;
+  text-align: center;
+}
+
+.install-btn {
+  background: var(--ios-blue);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin: 8px 4px 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.install-btn:active {
+  transform: scale(0.95);
+}
+
+.install-btn.dismiss {
+  background: var(--ios-gray);
+  padding: 8px 12px;
+}
+
+/* iPhoneSE専用調整 */
+@media (max-width: 375px) and (max-height: 667px) {
+  .header {
+      padding: 16px;
+  }
+
+  .header h1 {
+      font-size: 24px;
+  }
+
+  .settings-btn {
+      position: static;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+  }
+
+  .main-content {
+      padding: 20px 16px;
+  }
+
+  .qr-btn {
+      padding: 18px 20px;
+      font-size: 17px;
+      min-height: 56px;
+  }
+
+  .qr-code {
+      padding: 20px;
+  }
+
+  .settings-panel, .qr-display {
+      padding: 16px;
+  }
+
+  .install-prompt {
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      font-size: 14px;
+  }
+}
+
+/* セーフエリア対応 */
+@supports (padding: max(0px)) {
+  .header {
+      padding-top: max(20px, env(safe-area-inset-top) + 16px);
+      padding-bottom: 20px;
+  }
+
+  .install-prompt {
+      bottom: max(34px, env(safe-area-inset-bottom) + 20px);
+  }
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  :root {
+      --ios-background: 
+#000000;
+      --ios-card-background: rgba(28, 28, 30, 0.8);
+      --ios-text: 
+#FFFFFF;
+      --ios-secondary-text: 
+#8E8E93;
+      --ios-border: rgba(84, 84, 88, 0.6);
+      --ios-shadow: rgba(0, 0, 0, 0.3);
+      --ios-light-gray: 
+#1C1C1E;
+  }
+
+  .input-group input, .input-group textarea {
+      background: 
+#1C1C1E;
+      color: white;
+  }
+
+  .qr-code {
+      background: white;
+  }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <button class="settings-btn" onclick="showSettings()">⚙️</button>
-        </div>
+<div class="container">
+<div class="header">
+  <button class="settings-btn" onclick="showSettings()">⚙️</button>
+</div>
 
-```
 <div id="main-view" class="main-content">
-    <div class="qr-buttons">
-        <button class="qr-btn" onclick="showQR(1)">
-            <span id="qr1-name">QR1</span>
-        </button>
-        <button class="qr-btn" onclick="showQR(2)">
-            <span id="qr2-name">QR2</span>
-        </button>
-    </div>
+<div class="qr-buttons">
+  <button class="qr-btn" onclick="showQR(1)">
+      <span id="qr1-name">QR1</span>
+  </button>
+  <button class="qr-btn" onclick="showQR(2)">
+      <span id="qr2-name">QR2</span>
+  </button>
+</div>
 </div>
 
 <div id="qr1-display" class="qr-display">
-    <h2 id="qr1-title">QR1</h2>
-    <div id="qr1-code" class="qr-code"></div>
-    <button class="back-btn" onclick="showMain()">戻る</button>
+<h2 id="qr1-title">QR1</h2>
+<div id="qr1-code" class="qr-code"></div>
+<button class="back-btn" onclick="showMain()">戻る</button>
 </div>
 
 <div id="qr2-display" class="qr-display">
-    <h2 id="qr2-title">QR2</h2>
-    <div id="qr2-code" class="qr-code"></div>
-    <button class="back-btn" onclick="showMain()">戻る</button>
+<h2 id="qr2-title">QR2</h2>
+<div id="qr2-code" class="qr-code"></div>
+<button class="back-btn" onclick="showMain()">戻る</button>
 </div>
 
 <div id="settings-view" class="settings-panel">
-    <div class="setting-group">
-        <h3>QR1 設定</h3>
-        <div class="input-group">
-            <label for="qr1-name-input">名称</label>
-            <input type="text" id="qr1-name-input" value="QR1">
-        </div>
-        <div class="input-group">
-            <label for="qr1-text-input">QRコード内容</label>
-            <textarea id="qr1-text-input" rows="3" placeholder="QRコードに埋め込むテキストを入力"></textarea>
-        </div>
-    </div>
-    
-    <div class="setting-group">
-        <h3>QR2 設定</h3>
-        <div class="input-group">
-            <label for="qr2-name-input">名称</label>
-            <input type="text" id="qr2-name-input" value="QR2">
-        </div>
-        <div class="input-group">
-            <label for="qr2-text-input">QRコード内容</label>
-            <textarea id="qr2-text-input" rows="3" placeholder="QRコードに埋め込むテキストを入力"></textarea>
-        </div>
-    </div>
-    
-    <div class="setting-group">
-        <h3>データ管理</h3>
-        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-            <button class="backup-btn" onclick="exportSettings()">📤 エクスポート</button>
-            <button class="backup-btn" onclick="importSettings()">📥 インポート</button>
-        </div>
-        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-            <button class="backup-btn" onclick="copyToClipboard()">📋 コピー</button>
-            <button class="backup-btn" onclick="pasteFromClipboard()">📝 ペースト</button>
-        </div>
-        <div style="font-size: 12px; color: var(--ios-secondary-text); line-height: 1.4;">
-            iOS PWAでデータが消える場合：<br>
-            1. 「コピー」でテキストとして保存<br>
-            2. メモアプリ等に貼り付け<br>
-            3. 復元時に「ペースト」で戻す
-        </div>
-        <input type="file" id="import-file" accept=".json" style="display: none;" onchange="handleFileImport(event)">
-    </div>
-    
-    <button class="save-btn" onclick="saveSettings()">保存</button>
+<div class="setting-group">
+  <h3>QR1 設定</h3>
+  <div class="input-group">
+      <label for="qr1-name-input">名称</label>
+      <input type="text" id="qr1-name-input" value="QR1">
+  </div>
+  <div class="input-group">
+      <label for="qr1-text-input">QRコード内容</label>
+      <textarea id="qr1-text-input" rows="3" placeholder="QRコードに埋め込むテキストを入力"></textarea>
+  </div>
 </div>
-```
 
+<div class="setting-group">
+  <h3>QR2 設定</h3>
+  <div class="input-group">
+      <label for="qr2-name-input">名称</label>
+      <input type="text" id="qr2-name-input" value="QR2">
+  </div>
+  <div class="input-group">
+      <label for="qr2-text-input">QRコード内容</label>
+      <textarea id="qr2-text-input" rows="3" placeholder="QRコードに埋め込むテキストを入力"></textarea>
+  </div>
+</div>
+
+<div class="setting-group">
+  <h3>データ管理</h3>
+  <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+      <button class="backup-btn" onclick="exportSettings()">📤 エクスポート</button>
+      <button class="backup-btn" onclick="importSettings()">📥 インポート</button>
+  </div>
+  <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+      <button class="backup-btn" onclick="copyToClipboard()">📋 コピー</button>
+      <button class="backup-btn" onclick="pasteFromClipboard()">📝 ペースト</button>
+  </div>
+  <div style="font-size: 12px; color: var(--ios-secondary-text); line-height: 1.4;">
+      iOS PWAでデータが消える場合：<br>
+      1. 「コピー」でテキストとして保存<br>
+      2. メモアプリ等に貼り付け<br>
+      3. 復元時に「ペースト」で戻す
+  </div>
+  <input type="file" id="import-file" accept=".json" style="display: none;" onchange="handleFileImport(event)">
+</div>
+
+<button class="save-btn" onclick="saveSettings()">保存</button>
+</div>
 </div>
 
 <div id="install-prompt" class="install-prompt">
@@ -518,7 +539,7 @@
         qr1: { name: 'QR1', text: 'QR1のサンプルテキスト' },
         qr2: { name: 'QR2', text: 'QR2のサンプルテキスト' }
     };
-    
+
     let deferredPrompt = null;
 
     // 初期化
@@ -540,7 +561,7 @@
         updateUI();
         generateQRCodes();
         setupAutoSave();
-        
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -548,7 +569,7 @@
                 document.getElementById('install-prompt').style.display = 'block';
             }, 3000);
         });
-        
+
         window.addEventListener('appinstalled', () => {
             hideInstallPrompt();
         });
@@ -584,7 +605,7 @@
             'qr1-name-input', 'qr1-text-input', 
             'qr2-name-input', 'qr2-text-input'
         ];
-        
+
         inputs.forEach(id => {
             const element = document.getElementById(id);
             if (element) {
@@ -610,7 +631,7 @@
 
     function showSaveError() {
         const errorDiv = document.createElement('div');
-        errorDiv.style.cssText = `
+        errorDiv.style.cssText = 
             position: fixed;
             top: 50%;
             left: 50%;
@@ -621,10 +642,10 @@
             border-radius: 12px;
             z-index: 9999;
             font-weight: 600;
-        `;
+        ;
         errorDiv.textContent = '⚠️ 設定の保存に失敗しました';
         document.body.appendChild(errorDiv);
-        
+
         setTimeout(() => {
             document.body.removeChild(errorDiv);
         }, 3000);
@@ -636,7 +657,7 @@
         document.getElementById('qr2-name').textContent = appData.qr2.name;
         document.getElementById('qr1-title').textContent = appData.qr1.name;
         document.getElementById('qr2-title').textContent = appData.qr2.name;
-        
+
         document.getElementById('qr1-name-input').value = appData.qr1.name;
         document.getElementById('qr2-name-input').value = appData.qr2.name;
         document.getElementById('qr1-text-input').value = appData.qr1.text;
@@ -655,15 +676,17 @@
                     element: document.createElement('canvas'),
                     value: appData.qr1.text,
                     size: 200,
-                    foreground: '#000000',
-                    background: '#ffffff'
+                    foreground: '
+#000000',
+                    background: '
+#ffffff'
                 });
                 qr1Element.appendChild(qr1.canvas);
             } catch (e) {
                 qr1Element.innerHTML = '<p style="color: var(--ios-red);">QRコード生成エラー</p>';
             }
         }
-        
+
         qr2Element.innerHTML = '';
         if (appData.qr2.text) {
             try {
@@ -671,8 +694,10 @@
                     element: document.createElement('canvas'),
                     value: appData.qr2.text,
                     size: 200,
-                    foreground: '#000000',
-                    background: '#ffffff'
+                    foreground: '
+#000000',
+                    background: '
+#ffffff'
                 });
                 qr2Element.appendChild(qr2.canvas);
             } catch (e) {
@@ -705,12 +730,12 @@
         appData.qr1.text = document.getElementById('qr1-text-input').value || '';
         appData.qr2.name = document.getElementById('qr2-name-input').value || 'QR2';
         appData.qr2.text = document.getElementById('qr2-text-input').value || '';
-        
+
         saveData();
         updateUI();
         generateQRCodes();
         showMain();
-        
+
         navigator.vibrate && navigator.vibrate(50);
     }
 
@@ -745,7 +770,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `qr-settings-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = qr-settings-${new Date().toISOString().split('T')[0]}.json;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -787,7 +812,7 @@
 
     function showMessage(message, type = 'info') {
         const messageDiv = document.createElement('div');
-        messageDiv.style.cssText = `
+        messageDiv.style.cssText = 
             position: fixed;
             top: 100px;
             left: 50%;
@@ -800,19 +825,70 @@
             font-weight: 600;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             animation: slideIn 0.3s ease;
-        `;
+        ;
         messageDiv.textContent = message;
-        
+
         const style = document.createElement('style');
-        style.textContent = `
+        style.textContent = 
             @keyframes slideIn {
                 from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
                 to { transform: translateX(-50%) translateY(0); opacity: 1; }
             }
-        `;
+        ;
         document.head.appendChild(style);
-        
+
         document.body.appendChild(messageDiv);
-        
+
         setTimeout(() => {
-            message
+            messageDiv.style.animation = 'slideIn 0.3s ease reverse';
+            setTimeout(() => {
+                if (document.body.contains(messageDiv)) {
+                    document.body.removeChild(messageDiv);
+                }
+                if (document.head.contains(style)) {
+                    document.head.removeChild(style);
+                }
+            }, 300);
+        }, 2500);
+    }
+
+    async function copyToClipboard() {
+        try {
+            const exportData = {
+                version: '1.0',
+                timestamp: new Date().toISOString(),
+                data: appData
+            };
+            const dataStr = JSON.stringify(exportData);
+            await navigator.clipboard.writeText(dataStr);
+            showMessage('📋 クリップボードにコピーしました', 'success');
+        } catch (e) {
+            console.error('コピーエラー:', e);
+            const dataStr = JSON.stringify(appData);
+            prompt('以下のテキストをコピーしてメモアプリに保存してください：', dataStr);
+        }
+    }
+
+    async function pasteFromClipboard() {
+        try {
+            let pastedData = await navigator.clipboard.readText();
+            if (!pastedData) return;
+            const importData = JSON.parse(pastedData);
+            if (importData.data && importData.data.qr1 && importData.data.qr2) {
+                appData = importData.data;
+                saveData();
+                updateUI();
+                generateQRCodes();
+                showMessage('✅ データを復元しました', 'success');
+            } else {
+                showMessage('❌ 無効なデータ形式です', 'error');
+            }
+        } catch (e) {
+            console.error('ペーストエラー:', e);
+            showMessage('❌ データの復元に失敗しました', 'error');
+
+        }
+    }
+</script>
+</body>
+</html>
