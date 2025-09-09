@@ -470,13 +470,13 @@
     <div id="qr1-display" class="qr-display">
         <h2 id="qr1-title">QR1</h2>
         <div id="qr1-code" class="qr-code"></div>
-        <button class="back-btn" onclick="showMain()">戻る</button>
+        <button class="back-btn" onclick="showMainView()">戻る</button>
     </div>
     
     <div id="qr2-display" class="qr-display">
         <h2 id="qr2-title">QR2</h2>
         <div id="qr2-code" class="qr-code"></div>
-        <button class="back-btn" onclick="showMain()">戻る</button>
+        <button class="back-btn" onclick="showMainView()">戻る</button>
     </div>
     
     <div id="settings-view" class="settings-panel">
@@ -685,6 +685,8 @@
             } catch (e) {
                 qr1Element.innerHTML = '<p style="color: var(--ios-red);">QRコード生成エラー</p>';
             }
+        } else {
+            qr1Element.innerHTML = '<p style="color: var(--ios-secondary-text); font-size: 14px;">QRコードに変換するテキストを入力してください。</p>';
         }
         
         qr2Element.innerHTML = '';
@@ -701,11 +703,13 @@
             } catch (e) {
                 qr2Element.innerHTML = '<p style="color: var(--ios-red);">QRコード生成エラー</p>';
             }
+        } else {
+            qr2Element.innerHTML = '<p style="color: var(--ios-secondary-text); font-size: 14px;">QRコードに変換するテキストを入力してください。</p>';
         }
     }
 
     // 画面切り替え
-    function showMain() {
+    function showMainView() {
         document.getElementById('main-view').style.display = 'block';
         document.getElementById('qr1-display').classList.remove('active');
         document.getElementById('qr2-display').classList.remove('active');
@@ -714,11 +718,14 @@
 
     function showQR(num) {
         document.getElementById('main-view').style.display = 'none';
+        document.getElementById('settings-view').classList.remove('active');
         document.getElementById('qr' + num + '-display').classList.add('active');
     }
 
     function showSettings() {
         document.getElementById('main-view').style.display = 'none';
+        document.getElementById('qr1-display').classList.remove('active');
+        document.getElementById('qr2-display').classList.remove('active');
         document.getElementById('settings-view').classList.add('active');
     }
 
@@ -732,7 +739,7 @@
         saveData();
         updateUI();
         generateQRCodes();
-        showMain();
+        showMainView();
         
         navigator.vibrate && navigator.vibrate(50);
     }
@@ -870,8 +877,19 @@
     async function pasteFromClipboard() {
         try {
             let pastedData = await navigator.clipboard.readText();
-            if (!pastedData) return;
-            const importData = JSON.parse(pastedData);
+            if (!pastedData) {
+                showMessage('📋 クリップボードにデータがありません', 'info');
+                return;
+            }
+
+            let importData;
+            try {
+                importData = JSON.parse(pastedData);
+            } catch (e) {
+                showMessage('❌ 無効なデータ形式です', 'error');
+                return;
+            }
+            
             if (importData.data && importData.data.qr1 && importData.data.qr2) {
                 appData = importData.data;
                 saveData();
