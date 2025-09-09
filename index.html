@@ -177,7 +177,7 @@
             align-items: center;
             justify-content: center;
             overflow: auto;
-            padding-top: calc(100px + 20px); /* ヘッダーの高さ + 余白 */
+            padding-top: calc(100px + 20px);
             padding-bottom: 20px;
             -webkit-overflow-scrolling: touch;
         }
@@ -245,7 +245,7 @@
             z-index: 999;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-top: calc(100px + 20px); /* ヘッダーの高さ + 余白 */
+            padding-top: calc(100px + 20px);
             padding-bottom: 20px;
         }
         
@@ -572,6 +572,9 @@
         generateQRCodes();
         setupAutoSave();
         
+        // ページ読み込み時にメイン画面を表示
+        showMainView();
+        
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -710,7 +713,6 @@
         }
     }
 
-    // 新しい画面切り替えロジック
     function hideAllViews() {
         document.getElementById('main-view').style.display = 'none';
         document.getElementById('qr1-display').classList.remove('active');
