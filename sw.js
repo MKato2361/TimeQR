@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qr-app-v6'; // キャッシュバージョンを更新
+const CACHE_NAME = 'qr-app-v6';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,7 +9,6 @@ const urlsToCache = [
   'https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js'
 ];
 
-// インストール時
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -23,25 +22,20 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// フェッチ時
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // キャッシュにあればそれを返す
         if (response) {
           return response;
         }
         
-        // なければネットワークから取得
-        return fetch(event.request).then(
-          (response) => {
-            // 有効なレスポンスでない場合はそのまま返す
+        return fetch(event.request)
+          .then((response) => {
             if (!response || response.status !== 200 || response.type !== 'basic' || !response.ok) {
               return response;
             }
 
-            // レスポンスをキャッシュに保存
             const responseToCache = response.clone();
             caches.open(CACHE_NAME)
               .then((cache) => {
@@ -49,19 +43,18 @@ self.addEventListener('fetch', (event) => {
               });
 
             return response;
-          }
-        ).catch((error) => {
-          console.error('Fetch error:', event.request.url, error);
-          return new Response('Network error occurred', {
-            status: 503,
-            statusText: 'Service Unavailable'
+          })
+          .catch((error) => {
+            console.error('Fetch error:', event.request.url, error);
+            return new Response('Network error occurred', {
+              status: 503,
+              statusText: 'Service Unavailable'
+            });
           });
-        });
       })
   );
 });
 
-// アクティベート時（古いキャッシュを削除）
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
