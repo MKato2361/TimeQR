@@ -37,7 +37,7 @@ self.addEventListener('fetch', (event) => {
         return fetch(event.request).then(
           (response) => {
             // 有効なレスポンスでない場合はそのまま返す
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+            if (!response || response.status !== 200 || response.type !== 'basic' || !response.ok) {
               return response;
             }
 
@@ -50,7 +50,13 @@ self.addEventListener('fetch', (event) => {
 
             return response;
           }
-        );
+        ).catch((error) => {
+          console.error('Fetch error:', event.request.url, error);
+          return new Response('Network error occurred', {
+            status: 503,
+            statusText: 'Service Unavailable'
+          });
+        });
       })
   );
 });
