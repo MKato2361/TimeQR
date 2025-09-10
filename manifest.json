@@ -1,20 +1,25 @@
-// manifest.json
 {
     "name": "QR Code App",
     "short_name": "QR App",
     "description": "PWA for displaying QR codes",
-    "start_url": ".",
+    "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#007aff",
+    "scope": "/",
     "icons": [
         {
-            "src": "icon-192x192.png",
+            "src": "/icon-180x180.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/icon-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "icon-512x512.png",
+            "src": "/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         }
