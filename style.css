@@ -1,0 +1,103 @@
+/* style.css */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f2f2f7;
+    color: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #000;
+        color: #fff;
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: 320px; /* iPhone SEの画面幅に最適化 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.qr-btn, .settings-btn, .back-btn, .save-btn {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    cursor: pointer;
+    background-color: #007aff;
+    color: #fff;
+}
+
+.settings-btn {
+    background-color: #8e8e93;
+}
+
+.back-btn, .save-btn {
+    background-color: #007aff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .qr-btn, .settings-btn, .back-btn, .save-btn {
+        background-color: #0a84ff;
+    }
+
+    .settings-btn {
+        background-color: #8e8e93;
+    }
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 15px;
+    border: 1px solid #c7c7cc;
+    border-radius: 5px;
+    font-size: 17px;
+    background-color: #fff;
+    color: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+    .input {
+        background-color: #1c1c1e;
+        color: #fff;
+        border-color: #38383a;
+    }
+}
+
+h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+#qr-code {
+    margin: 20px 0;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+    #qr-code {
+        background-color: #1c1c1e;
+    }
+}

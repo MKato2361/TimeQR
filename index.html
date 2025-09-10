@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <title>QR Code App</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192x192.png"> <!-- 適切なアイコンを準備してください -->
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="main-screen" class="screen">
+            <button id="qr1-btn" class="qr-btn">QR1</button>
+            <button id="qr2-btn" class="qr-btn">QR2</button>
+            <button id="settings-btn" class="settings-btn">設定</button>
+        </div>
+        <div id="qr-display" class="screen hidden">
+            <div id="qr-code"></div>
+            <button id="back-btn" class="back-btn">戻る</button>
+        </div>
+        <div id="settings-screen" class="screen hidden">
+            <h2>設定</h2>
+            <label for="qr1-label">QR1の名称:</label>
+            <input type="text" id="qr1-label" class="input">
+            <label for="qr1-content">QR1の内容:</label>
+            <input type="text" id="qr1-content" class="input">
+            <label for="qr2-label">QR2の名称:</label>
+            <input type="text" id="qr2-label" class="input">
+            <label for="qr2-content">QR2の内容:</label>
+            <input type="text" id="qr2-content" class="input">
+            <button id="save-btn" class="save-btn">保存</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
+</body>
+</html>
