@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qr-app-v3'; // キャッシュバージョンを更新
+const CACHE_NAME = 'qr-app-v10'; // キャッシュバージョンを更新
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
