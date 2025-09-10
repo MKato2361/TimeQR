@@ -1,23 +1,24 @@
-const CACHE_NAME = 'qr-app-v3'; // キャッシュバージョンを更新
+// service-worker.js
+const CACHE_NAME = 'qr-app-v2'; // キャッシュバージョンを更新
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll([
-                '/',
-                '/index.html',
-                '/style.css',
-                '/script.js',
+                '.',
+                'index.html',
+                'style.css',
+                'script.js',
                 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
-                '/manifest.json',
-                '/icon-180x180.png',
-                '/icon-192x192.png',
-                '/icon-512x512.png',
-                '/splash-640x1136.png'
+                'manifest.json',
+                'icon-180x180.png',
+                'icon-192x192.png',
+                'icon-512x512.png',
+                'splash-640x1136.png'
             ]);
         })
     );
-    self.skipWaiting();
+    self.skipWaiting(); // 新しいService Workerを即座にアクティブ化
 });
 
 self.addEventListener('activate', (event) => {
@@ -30,7 +31,7 @@ self.addEventListener('activate', (event) => {
             );
         })
     );
-    self.clients.claim();
+    self.clients.claim(); // 即座に制御を開始
 });
 
 self.addEventListener('fetch', (event) => {
