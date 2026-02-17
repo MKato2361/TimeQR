@@ -10,31 +10,26 @@ body {
     background-color: #f2f2f7;
     color: #000;
 }
-
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #000;
         color: #fff;
     }
 }
-
 .container {
     width: 100%;
     max-width: 320px; /* iPhone SEの画面幅に最適化 */
     padding: 20px;
     box-sizing: border-box;
 }
-
 .screen {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
 .hidden {
     display: none;
 }
-
 .qr-btn, .settings-btn, .back-btn, .save-btn {
     width: 100%;
     padding: 15px;
@@ -46,25 +41,20 @@ body {
     background-color: #007aff;
     color: #fff;
 }
-
 .settings-btn {
     background-color: #8e8e93;
 }
-
 .back-btn, .save-btn {
     background-color: #007aff;
 }
-
 @media (prefers-color-scheme: dark) {
     .qr-btn, .settings-btn, .back-btn, .save-btn {
         background-color: #0a84ff;
     }
-
     .settings-btn {
         background-color: #8e8e93;
     }
 }
-
 .input {
     width: 100%;
     padding: 10px;
@@ -75,7 +65,6 @@ body {
     background-color: #fff;
     color: #000;
 }
-
 @media (prefers-color-scheme: dark) {
     .input {
         background-color: #1c1c1e;
@@ -83,21 +72,14 @@ body {
         border-color: #38383a;
     }
 }
-
 h2 {
     font-size: 20px;
     margin-bottom: 20px;
 }
-
 #qr-code {
     margin: 20px 0;
-    background-color: #fff;
-    padding: 10px;
+    background-color: #fff; /* ダークモードでも常に白背景を維持 */
+    padding: 16px;           /* クワイエットゾーン確保のため少し広げた */
     border-radius: 10px;
 }
-
-@media (prefers-color-scheme: dark) {
-    #qr-code {
-        background-color: #1c1c1e;
-    }
-}
+/* #qr-code のダークモード上書きは削除 → 常に白背景でQRが見やすい */
