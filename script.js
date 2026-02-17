@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const qrCodeDiv = document.getElementById('qr-code');
 
     let qrData = loadSettings();
+    let currentContent = ''; // 現在表示中のQRコードの内容を保持
 
     updateButtons();
 
@@ -26,13 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showQR(content) {
         if (!content) return;
+        currentContent = content; // 内容を保持しておく
         qrCodeDiv.innerHTML = '';
         new QRCode(qrCodeDiv, {
             text: content,
             width: 256,
             height: 256,
-            colorDark: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#ffffff' : '#000000',
-            colorLight: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#000000' : '#ffffff'
+            colorDark: '#000000',  // 常に黒
+            colorLight: '#ffffff'  // 常に白
         });
         mainScreen.classList.add('hidden');
         qrDisplay.classList.remove('hidden');
@@ -82,11 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // ダークモード変更時にQRコードを更新（表示中のみ）
+    // ダークモード変更時にQRコードを再生成（保持しておいた内容で正しく再生成）
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        if (!qrDisplay.classList.contains('hidden')) {
-            const currentContent = qrCodeDiv.querySelector('canvas') ? qrCodeDiv.querySelector('canvas').toDataURL() : ''; // 簡易的に再生成
-            showQR(currentContent); // 実際の内容で再生成が必要
+        if (!qrDisplay.classList.contains('hidden') && currentContent) {
+            showQR(currentContent);
         }
     });
 });
